@@ -10,7 +10,7 @@ It'll always return the last registred name
  * Load the plugin in your bootstrap.php CakePlugin::load('AbnLookup', array('bootstrap' => false, 'routes' => true));
  * There is a predefined route for the look up /abn_lookup
  
-How to USE
+How to use
 =========
 
 http://localhost/abn_lookup/my_abn_number
