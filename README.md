@@ -1,4 +1,4 @@
-Abn Lookup plugin for Cakephp
+Abn Lookup plugin for CakePHP
 =========
 
 This plugin wil help you lookup an ABN number in the australian business registry and return your business name (legal entity name) under that ABN.
