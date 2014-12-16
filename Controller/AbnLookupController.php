@@ -44,9 +44,19 @@ class AbnLookupController extends AbnLookupAppController
         $ent_type = $result->ABRPayloadSearchResults->response->businessEntity201408->entityType->entityTypeCode;
         $ent_type_desc = $result->ABRPayloadSearchResults->response->businessEntity201408->entityType->entityDescription;
 
-        if(empty($result->ABRPayloadSearchResults->response->businessEntity201408->mainTradingName->organisationName))
+        
+        if($result->ABRPayloadSearchResults->response->businessEntity201408->entityType->entityTypeCode == 'IND')
         {
-            $ent_name = $result->ABRPayloadSearchResults->response->businessEntity201408->mainName->organisationName;
+             $ent_name = $result->ABRPayloadSearchResults->response->businessEntity201408->legalName->givenName;
+             $ent_name .= $result->ABRPayloadSearchResults->response->businessEntity201408->legalName->otherGivenName  . ' ';
+             $ent_name .= $result->ABRPayloadSearchResults->response->businessEntity201408->legalName->familyName . ' ';
+        }else
+        {
+
+            if(empty($result->ABRPayloadSearchResults->response->businessEntity201408->mainTradingName->organisationName))
+            {
+                $ent_name = $result->ABRPayloadSearchResults->response->businessEntity201408->main->organisationName;
+            }
         }
 
 
