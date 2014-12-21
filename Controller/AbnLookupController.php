@@ -40,31 +40,57 @@ class AbnLookupController extends AbnLookupAppController
 
         $result = $client->__soapCall('SearchByABNv201408', array($soap_params));
 
-        $ent_name = $result->ABRPayloadSearchResults->response->businessEntity201408->mainTradingName->organisationName;
-        $ent_type = $result->ABRPayloadSearchResults->response->businessEntity201408->entityType->entityTypeCode;
-        $ent_type_desc = $result->ABRPayloadSearchResults->response->businessEntity201408->entityType->entityDescription;
+        $entityTypeCode = $result->ABRPayloadSearchResults->response->businessEntity201408->entityType->entityTypeCode;
+        $entityDescription = $result->ABRPayloadSearchResults->response->businessEntity201408->entityType->entityDescription;
 
-        
-        if($result->ABRPayloadSearchResults->response->businessEntity201408->entityType->entityTypeCode == 'IND')
-        {
-             $ent_name = $result->ABRPayloadSearchResults->response->businessEntity201408->legalName->givenName;
-             $ent_name .= $result->ABRPayloadSearchResults->response->businessEntity201408->legalName->otherGivenName  . ' ';
-             $ent_name .= $result->ABRPayloadSearchResults->response->businessEntity201408->legalName->familyName . ' ';
-        }else
-        {
 
-            if(empty($result->ABRPayloadSearchResults->response->businessEntity201408->mainTradingName->organisationName))
-            {
-                $ent_name = $result->ABRPayloadSearchResults->response->businessEntity201408->main->organisationName;
-            }
+
+        switch ($result->ABRPayloadSearchResults->response->businessEntity201408->entityType->entityTypeCode) {
+            case 'IND':
+                $entitiyName = $result->ABRPayloadSearchResults->response->businessEntity201408->legalName->givenName;
+                $entitiyName .= $result->ABRPayloadSearchResults->response->businessEntity201408->legalName->otherGivenName  . ' ';
+                $entitiyName .= $result->ABRPayloadSearchResults->response->businessEntity201408->legalName->familyName . ' ';
+                $mainTradingName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainTradingName->organisationName;
+                break;
+            
+
+            case 'PTR':
+                $mainTradingName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainTradingName->organisationName;
+                $mainName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainName->organisationName;
+                $entitiyName = $mainTradingName;
+                break;
+
+            case 'PUB':
+                $mainTradingName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainTradingName->organisationName;
+                $mainName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainName->organisationName;
+                $entitiyName = $mainTradingName;
+                break;
+
+            case 'PRV':
+                $mainTradingName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainTradingName->organisationName;
+                $mainName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainName->organisationName;
+                $entitiyName = $mainTradingName;
+                break;
+
+            case 'TRT':
+                $mainTradingName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainTradingName->organisationName;
+                $mainName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainName->organisationName;
+                $entitiyName = $mainTradingName;
+                break;
+
+            default:
+                # code...
+                break;
         }
 
 
 
         echo json_encode(array(
-                'legal_entity_name' => $ent_name,
-                'legal_entity_type' => $ent_type,
-                'legal_entity_type_description' => $ent_type_desc,
+                'entityName' => $entitiyName,
+                'mainTradingName' => $mainTradingName,
+                'mainName' => $mainName,
+                'entityTypeCode' => $entityTypeCode,
+                'entityDescription' => $entityDescription,
         ));
     }
 
