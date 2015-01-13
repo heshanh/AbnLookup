@@ -91,6 +91,15 @@ class AbnLookupController extends AbnLookupAppController
                 $entitiyName = $mainName;
                 break;
 
+
+            case 'SGE':
+                $mainTradingName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainTradingName->organisationName;
+                $mainName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainName->organisationName;
+                // $entitiyName = $mainTradingName;
+                $entitiyName = $mainName;
+                break;
+
+                
             default:
                 # code...
                 break;
