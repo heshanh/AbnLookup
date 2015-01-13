@@ -15,10 +15,11 @@ class AbnLookupController extends AbnLookupAppController
 
         $this->guid = ''; //add your GUID here - http://abr.business.gov.au/RegisterAgreement.aspx
         $this->service_url = 'http://abr.business.gov.au/abrxmlsearch/ABRXMLSearch.asmx?WSDL';
+        $this->service_name = 'SearchByABNv201408';
     }
 
 
-    function abn()
+     function abn()
     {
         $this->autoRender = false;
 
@@ -38,7 +39,9 @@ class AbnLookupController extends AbnLookupAppController
             'authenticationGuid' => $this->guid,
         );
 
-        $result = $client->__soapCall('SearchByABNv201408', array($soap_params));
+        $result = $client->__soapCall($this->service_name, array($soap_params));
+
+        // debug($result->ABRPayloadSearchResults);die();
 
         $entityTypeCode = $result->ABRPayloadSearchResults->response->businessEntity201408->entityType->entityTypeCode;
         $entityDescription = $result->ABRPayloadSearchResults->response->businessEntity201408->entityType->entityDescription;
@@ -47,9 +50,10 @@ class AbnLookupController extends AbnLookupAppController
 
         switch ($result->ABRPayloadSearchResults->response->businessEntity201408->entityType->entityTypeCode) {
             case 'IND':
-                $entitiyName = $result->ABRPayloadSearchResults->response->businessEntity201408->legalName->givenName;
-                $entitiyName .= $result->ABRPayloadSearchResults->response->businessEntity201408->legalName->otherGivenName  . ' ';
-                $entitiyName .= $result->ABRPayloadSearchResults->response->businessEntity201408->legalName->familyName . ' ';
+                $entitiyName_array[] = $result->ABRPayloadSearchResults->response->businessEntity201408->legalName->givenName;
+                $entitiyName_array[] = $result->ABRPayloadSearchResults->response->businessEntity201408->legalName->otherGivenName;
+                $entitiyName_array[] = $result->ABRPayloadSearchResults->response->businessEntity201408->legalName->familyName;
+                $entitiyName = implode(' ', $entitiyName_array);
                 $mainTradingName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainTradingName->organisationName;
                 break;
             
@@ -57,7 +61,8 @@ class AbnLookupController extends AbnLookupAppController
             case 'PTR':
                 $mainTradingName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainTradingName->organisationName;
                 $mainName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainName->organisationName;
-                $entitiyName = $mainTradingName;
+                // $entitiyName = $mainTradingName;
+                $entitiyName = $mainName;
                 break;
 
             case 'PUB':
@@ -69,7 +74,8 @@ class AbnLookupController extends AbnLookupAppController
             case 'PRV':
                 $mainTradingName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainTradingName->organisationName;
                 $mainName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainName->organisationName;
-                $entitiyName = $mainTradingName;
+                // $entitiyName = $mainTradingName;
+                $entitiyName = $mainName;
                 break;
 
             case 'TRT':
@@ -78,10 +84,26 @@ class AbnLookupController extends AbnLookupAppController
                 $entitiyName = $mainTradingName;
                 break;
 
+            case 'DTT':
+                $mainTradingName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainTradingName->organisationName;
+                $mainName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainName->organisationName;
+                // $entitiyName = $mainTradingName;
+                $entitiyName = $mainName;
+                break;
+
             default:
                 # code...
                 break;
         }
+
+        //exceptions
+        if( $result->ABRPayloadSearchResults->response->businessEntity201408->entityType->entityTypeCode == 'PUB' && empty($result->ABRPayloadSearchResults->response->businessEntity201408->mainTradingName->organisationName))
+        {
+                $mainTradingName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainName->organisationName;
+                $mainName = $result->ABRPayloadSearchResults->response->businessEntity201408->mainName->organisationName;
+                $entitiyName = $mainTradingName;
+        }
+
 
 
 
