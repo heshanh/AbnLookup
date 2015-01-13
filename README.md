@@ -15,10 +15,17 @@ It'll always return the last registred name
 
 	{
 		"require": {
-			"cakephp/abnlookup": "dev-master"
+			"cakephp/abnlookup": *"
 		}
 	}
 
+### Enable plugin
+
+You need to enable the plugin in your app/Config/bootstrap.php file:
+
+`CakePlugin::load('BoostCake');`
+
+If you are already using `CakePlugin::loadAll();`, then this is not necessary.
 ## How to use
 
 
