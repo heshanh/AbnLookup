@@ -17,7 +17,7 @@ It'll always return the last registred name
 
 	{
 		"require": {
-			"cakephp/abnlookup": *"
+			"cakephp/abnlookup": "*"
 		}
 	}
 
